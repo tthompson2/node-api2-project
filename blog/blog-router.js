@@ -19,11 +19,17 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res) => {
 
-    console.log(req.params);
+    console.log(req.body);
+
+    if(!req.body.title || req.body.contents) {
+        return res.status(400).json({
+            message: "Missing blog title or body"
+        })
+    }
 
     // put if statement to handle fields that are expected in the object
 
-    blog.insert(req.params.body)
+    blog.insert(req.body)
         .then((blogs) => {
             res.status(201).json(blogs)
         })
@@ -67,23 +73,23 @@ router.get("/:id", (req, res) => {
 })
 
 router.get("/:id/comments/:postId", (req, res) => {
-    
+
     blog.findCommentById(req.params.id, req.params.postID)
-    .then((blog) => {
-        if(blog) {
-          res.json(blog);
-        }else {
-            res.status(404).json({
-                message: "Blog Post was not found",
-            })
-        }
-    })
-    .catch((error) => {
-        console.log(error);
-        res.status(500).json({
-            message: "Could not find blog post"
+        .then((blog) => {
+            if (blog) {
+                res.json(blog);
+            } else {
+                res.status(404).json({
+                    message: "Blog Post was not found",
+                })
+            }
         })
-    })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json({
+                message: "Could not find blog post"
+            })
+        })
 })
 
 
@@ -100,18 +106,24 @@ router.get("/:id/comments", (req, res) => {
         })
 })
 
-router.post("/:id/", (req, res) => {
-    
-    blog.insertComment(req.params.body)
-    .then((comment) => {
-       res.status(200).json(comment);
-    })
-    .catch((error) => {
-        console.log(error);
-        res.status(500).json({
-            message: "Unable to insert comment into blog post"
+router.post("/:id/comments", (req, res) => {
+
+    if(!req.body.text) {
+        res.status(400).json({
+            mesage: "Need a text value for the comment"
         })
-    })
+    }
+
+    blog.insertComment(req.body)
+        .then((comment) => {
+            res.status(200).json(comment);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json({
+                message: "Unable to insert comment into blog post"
+            })
+        })
 })
 
 module.exports = router;
