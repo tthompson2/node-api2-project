@@ -6,11 +6,11 @@ const blogRouter = require("./blog/blog-router")
 const server = express();
 const port = 4000;
 
-server.use("/", welcomeRouter);
-server.use("/blog", blogRouter);
-
 server.use(express.json());
 server.use(cors());
+
+server.use("/", welcomeRouter);
+server.use("/blog", blogRouter);
 
 // server.use(logger("short"))
 

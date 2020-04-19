@@ -21,7 +21,7 @@ router.post("/", (req, res) => {
 
     console.log(req.body);
 
-    if(!req.body.title || req.body.contents) {
+    if(!req.body.title || !req.body.contents) {
         return res.status(400).json({
             message: "Missing blog title or body"
         })
@@ -44,7 +44,7 @@ router.post("/", (req, res) => {
 
 router.put("/:id", (req, res) => {
 
-    blog.update(req.params.id, req.params.body)
+    blog.update(req.params.id, req.body)
         .then((blog) => {
             res.status(200).json(blog)
         })
@@ -74,7 +74,9 @@ router.get("/:id", (req, res) => {
 
 router.get("/:id/comments/:postId", (req, res) => {
 
-    blog.findCommentById(req.params.id, req.params.postID)
+    console.log(req.params.id)
+
+    blog.findCommentById(req.params.id, req.params.postId)
         .then((blog) => {
             if (blog) {
                 res.json(blog);
